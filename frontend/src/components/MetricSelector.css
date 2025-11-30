@@ -1,0 +1,44 @@
+.metric-selector {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.metric-selector h2 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.metric-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.metric-checkbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.metric-checkbox:hover {
+  background: #e9ecef;
+}
+
+.metric-checkbox input {
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.metric-checkbox span {
+  font-size: 14px;
+  color: #555;
+}
+

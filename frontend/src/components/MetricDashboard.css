@@ -1,0 +1,33 @@
+.metric-dashboard {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.metric-dashboard h2 {
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.charts-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.chart-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  background: #fafafa;
+}
+
+.chart-card h3 {
+  font-size: 16px;
+  margin-bottom: 15px;
+  color: #555;
+  text-transform: capitalize;
+}
+
