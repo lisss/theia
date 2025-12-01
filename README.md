@@ -11,7 +11,7 @@ Theia consists of several components:
 3. **Worker** - Celery worker that processes queued metrics and stores them in the database
 4. **Backend API** - Flask API that serves metrics data (port 5001)
 5. **Frontend** - React + TypeScript dashboard for visualizing metrics (port 3000)
-6. **Database** - PostgreSQL for storing metrics
+6. **Database** - InfluxDB for time-series metrics storage
 
 ## Features
 
@@ -71,7 +71,7 @@ If you encounter network errors when pulling Docker images (e.g., "EOF" or "TLS 
 2. **Manually pull images** if automatic pull fails:
    ```bash
    docker pull redis:7-alpine
-   docker pull postgres:15-alpine
+   docker pull influxdb:2.7-alpine
    ```
 
 3. **Check your network connection** - Ensure you can access Docker Hub:
@@ -164,7 +164,10 @@ done
 
 3. Set environment variables:
    ```bash
-   export DATABASE_URL=postgresql://theia:theia@localhost:5432/theia
+   export INFLUXDB_URL=http://localhost:8086
+   export INFLUXDB_TOKEN=theia-admin-token-123456
+   export INFLUXDB_ORG=theia
+   export INFLUXDB_BUCKET=theia
    export REDIS_URL=redis://localhost:6379/0
    ```
 
@@ -241,7 +244,7 @@ The frontend uses time windows for aggregation:
 
 ## Docker Services
 
-- **db**: PostgreSQL database
+- **influxdb**: InfluxDB time-series database
 - **redis**: Redis message queue
 - **backend**: Flask API server
 - **worker**: Celery worker for processing metrics
@@ -258,11 +261,18 @@ docker-compose exec db psql -U theia -d theia
 
 ### Connection Details for UI Tools
 
-- **Host**: localhost
-- **Port**: 5432
-- **Database**: theia
+**InfluxDB UI:**
+- **URL**: http://localhost:8086
 - **Username**: theia
-- **Password**: theia
+- **Password**: theia123456
+- **Organization**: theia
+- **Bucket**: theia
+- **Token**: theia-admin-token-123456
+
+**CLI Access:**
+```bash
+docker-compose exec influxdb influx
+```
 
 **Popular UI Tools:**
 - **DBeaver**: https://dbeaver.io/ (Free, cross-platform)

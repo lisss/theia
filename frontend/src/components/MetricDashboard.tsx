@@ -12,11 +12,15 @@ interface MetricData {
 interface MetricDashboardProps {
   metricsData: Record<string, MetricData[]>;
   selectedMetrics: string[];
+  timeWindow?: string;
+  aggregateFunction?: string;
 }
 
 const MetricDashboard: React.FC<MetricDashboardProps> = ({
   metricsData,
   selectedMetrics,
+  timeWindow = '5m',
+  aggregateFunction = 'mean',
 }) => {
   if (selectedMetrics.length === 0) {
     return (
@@ -77,7 +81,12 @@ const MetricDashboard: React.FC<MetricDashboardProps> = ({
                     stroke={colors[index % colors.length]}
                     strokeWidth={2}
                     dot={{ r: 4 }}
-                    name="Average Value"
+                    name={aggregateFunction === 'mean' ? 'Average' : 
+                          aggregateFunction === 'sum' ? 'Sum' :
+                          aggregateFunction === 'max' ? 'Maximum' :
+                          aggregateFunction === 'min' ? 'Minimum' :
+                          aggregateFunction === 'count' ? 'Count' :
+                          aggregateFunction === 'last' ? 'Last Value' : 'Value'}
                   />
                 </LineChart>
               </ResponsiveContainer>

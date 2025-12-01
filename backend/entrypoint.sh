@@ -1,14 +1,16 @@
 #!/bin/bash
 set -e
 
-echo "Waiting for database to be ready..."
-while ! nc -z db 5432; do
-  sleep 0.1
-done
-echo "Database is ready!"
+# If arguments are provided (e.g., celery command), skip InfluxDB check and execute directly
+if [ $# -gt 0 ]; then
+    exec "$@"
+fi
 
-echo "Initializing database..."
-python init_db.py
+echo "Waiting for InfluxDB to be ready..."
+while ! /usr/bin/curl -s http://influxdb:8086/health > /dev/null; do
+  sleep 0.5
+done
+echo "InfluxDB is ready!"
 
 echo "Starting Flask application..."
 exec python app.py

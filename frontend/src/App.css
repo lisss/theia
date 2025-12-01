@@ -24,3 +24,48 @@
   margin: 0 auto;
 }
 
+.controls-panel {
+  background: white;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.control-group label {
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.control-dropdown {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+  min-width: 150px;
+}
+
+.control-dropdown:hover {
+  border-color: #8884d8;
+}
+
+.control-dropdown:focus {
+  outline: none;
+  border-color: #8884d8;
+  box-shadow: 0 0 0 2px rgba(136, 132, 216, 0.2);
+}
+

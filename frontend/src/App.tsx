@@ -16,6 +16,8 @@ function App() {
   const [selectedMetrics, setSelectedMetrics] = useState<string[]>([]);
   const [metricsData, setMetricsData] = useState<Record<string, MetricData[]>>({});
   const [loading, setLoading] = useState(true);
+  const [timeWindow, setTimeWindow] = useState<string>('5m');
+  const [aggregateFunction, setAggregateFunction] = useState<string>('mean');
 
   useEffect(() => {
     loadMetricNames();
@@ -27,7 +29,7 @@ function App() {
       const interval = setInterval(loadMetricsData, 5000); // Refresh every 5 seconds
       return () => clearInterval(interval);
     }
-  }, [selectedMetrics]);
+  }, [selectedMetrics, timeWindow, aggregateFunction]);
 
   const loadMetricNames = async () => {
     try {
@@ -44,7 +46,7 @@ function App() {
     try {
       const data: Record<string, MetricData[]> = {};
       for (const metricName of selectedMetrics) {
-        const metrics = await fetchAggregatedMetrics(metricName);
+        const metrics = await fetchAggregatedMetrics(metricName, timeWindow, aggregateFunction);
         data[metricName] = metrics;
       }
       setMetricsData(data);
@@ -54,9 +56,9 @@ function App() {
   };
 
   const handleMetricToggle = (metricName: string) => {
-    setSelectedMetrics(prev => {
+    setSelectedMetrics((prev: string[]) => {
       if (prev.includes(metricName)) {
-        return prev.filter(name => name !== metricName);
+        return prev.filter((name: string) => name !== metricName);
       } else {
         return [...prev, metricName];
       }
@@ -75,9 +77,43 @@ function App() {
           onMetricToggle={handleMetricToggle}
           loading={loading}
         />
+        <div className="controls-panel">
+          <div className="control-group">
+            <label htmlFor="time-window">Time Window: </label>
+            <select
+              id="time-window"
+              value={timeWindow}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setTimeWindow(e.target.value)}
+              className="control-dropdown"
+            >
+              <option value="1m">1 Minute</option>
+              <option value="5m">5 Minutes</option>
+              <option value="1h">1 Hour</option>
+              <option value="1d">1 Day</option>
+            </select>
+          </div>
+          <div className="control-group">
+            <label htmlFor="aggregate-function">Aggregation: </label>
+            <select
+              id="aggregate-function"
+              value={aggregateFunction}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setAggregateFunction(e.target.value)}
+              className="control-dropdown"
+            >
+              <option value="mean">Average (Mean)</option>
+              <option value="sum">Sum</option>
+              <option value="max">Maximum</option>
+              <option value="min">Minimum</option>
+              <option value="count">Count</option>
+              <option value="last">Last Value</option>
+            </select>
+          </div>
+        </div>
         <MetricDashboard
           metricsData={metricsData}
           selectedMetrics={selectedMetrics}
+          timeWindow={timeWindow}
+          aggregateFunction={aggregateFunction}
         />
       </main>
     </div>

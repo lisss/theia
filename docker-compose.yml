@@ -1,19 +1,23 @@
 services:
-  db:
-    image: postgres:15-alpine
+  influxdb:
+    image: influxdb:2.7-alpine
     environment:
-      POSTGRES_USER: theia
-      POSTGRES_PASSWORD: theia
-      POSTGRES_DB: theia
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: theia
+      DOCKER_INFLUXDB_INIT_PASSWORD: theia123456
+      DOCKER_INFLUXDB_INIT_ORG: theia
+      DOCKER_INFLUXDB_INIT_BUCKET: theia
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: theia-admin-token-123456
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - influxdb_data:/var/lib/influxdb2
     ports:
-      - "5432:5432"
+      - "8086:8086"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U theia"]
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8086/health"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
 
   redis:
     image: redis:7-alpine
@@ -33,12 +37,15 @@ services:
         - theia-backend:latest
     image: theia-backend:latest
     environment:
-      DATABASE_URL: postgresql://theia:theia@db:5432/theia
+      INFLUXDB_URL: http://influxdb:8086
+      INFLUXDB_TOKEN: theia-admin-token-123456
+      INFLUXDB_ORG: theia
+      INFLUXDB_BUCKET: theia
       REDIS_URL: redis://redis:6379/0
     ports:
       - "5001:5000"
     depends_on:
-      db:
+      influxdb:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -54,10 +61,13 @@ services:
         - theia-backend:latest
     image: theia-backend:latest
     environment:
-      DATABASE_URL: postgresql://theia:theia@db:5432/theia
+      INFLUXDB_URL: http://influxdb:8086
+      INFLUXDB_TOKEN: theia-admin-token-123456
+      INFLUXDB_ORG: theia
+      INFLUXDB_BUCKET: theia
       REDIS_URL: redis://redis:6379/0
     depends_on:
-      db:
+      influxdb:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -102,5 +112,5 @@ services:
     command: yarn start
 
 volumes:
-  postgres_data:
+  influxdb_data:
 

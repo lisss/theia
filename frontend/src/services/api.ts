@@ -31,10 +31,11 @@ export const fetchMetrics = async (params?: {
 
 export const fetchAggregatedMetrics = async (
   name?: string,
-  window: string = '1m'
+  window: string = '1m',
+  aggregate: string = 'mean'
 ): Promise<AggregatedMetric[]> => {
   const response = await axios.get(`${API_BASE_URL}/api/metrics/aggregate`, {
-    params: { name, window },
+    params: { name, window, aggregate },
   });
   return response.data;
 };
