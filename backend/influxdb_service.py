@@ -109,7 +109,15 @@ class InfluxDB:
         from datetime import timedelta
         
         # Get raw metrics first - use longer time range for aggregation
-        raw_metrics = self.query_metrics(name=name, start_time="-24h", limit=10000)
+        # Use longer range to ensure we have enough data points for the graph
+        time_range_map = {
+            '1m': '-6h',   # 6 hours for 1-minute windows = 360 data points max
+            '5m': '-24h',  # 24 hours for 5-minute windows = 288 data points max
+            '1h': '-7d',   # 7 days for hourly windows = 168 data points max
+            '1d': '-30d'   # 30 days for daily windows = 30 data points max
+        }
+        time_range = time_range_map.get(window, '-24h')
+        raw_metrics = self.query_metrics(name=name, start_time=time_range, limit=50000)
         
         if not raw_metrics:
             return []
@@ -130,15 +138,19 @@ class InfluxDB:
             try:
                 timestamp = datetime.fromisoformat(metric['timestamp'].replace('Z', '+00:00'))
                 # Round down to window boundary
-                bucket_time = timestamp.replace(
-                    minute=(timestamp.minute // window_delta.seconds * 60) % 60 if window_delta.seconds < 3600 else 0,
-                    second=0,
-                    microsecond=0
-                )
-                if window_delta >= timedelta(hours=1):
-                    bucket_time = bucket_time.replace(minute=0)
                 if window_delta >= timedelta(days=1):
-                    bucket_time = bucket_time.replace(hour=0)
+                    # Daily buckets
+                    bucket_time = timestamp.replace(hour=0, minute=0, second=0, microsecond=0)
+                elif window_delta >= timedelta(hours=1):
+                    # Hourly buckets
+                    bucket_time = timestamp.replace(minute=0, second=0, microsecond=0)
+                elif window_delta >= timedelta(minutes=5):
+                    # 5-minute buckets
+                    minutes_rounded = (timestamp.minute // 5) * 5
+                    bucket_time = timestamp.replace(minute=minutes_rounded, second=0, microsecond=0)
+                else:
+                    # 1-minute buckets
+                    bucket_time = timestamp.replace(second=0, microsecond=0)
                 
                 metric_name = metric.get('name', name or 'unknown')
                 bucket_key = (bucket_time.isoformat(), metric_name)

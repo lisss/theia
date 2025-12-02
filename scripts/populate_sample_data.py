@@ -27,9 +27,9 @@ def populate_sample_data():
 
     print("Populating sample metrics data...")
 
-    # Generate metrics for the last 2 hours
+    # Generate metrics for the last 6 hours to have more data points
     now = datetime.utcnow()
-    start_time = now - timedelta(hours=2)
+    start_time = now - timedelta(hours=6)
 
     metrics_count = 0
 
@@ -37,7 +37,7 @@ def populate_sample_data():
     print("Generating button click metrics...")
     for i in range(50):
         timestamp = start_time + timedelta(
-            seconds=random.randint(0, 7200)  # Random time in last 2 hours
+            seconds=random.randint(0, 21600)  # Random time in last 6 hours
         )
         influxdb.write_metric(
             name="button_clicks",
@@ -57,7 +57,7 @@ def populate_sample_data():
     methods = ["GET", "POST", "PUT", "DELETE"]
 
     for i in range(40):
-        timestamp = start_time + timedelta(seconds=random.randint(0, 7200))
+        timestamp = start_time + timedelta(seconds=random.randint(0, 21600))
         influxdb.write_metric(
             name="api_requests",
             value=random.uniform(0.05, 2.5),  # Response time in seconds
@@ -76,7 +76,7 @@ def populate_sample_data():
     pages = ["/", "/dashboard", "/products", "/about", "/contact", "/login"]
 
     for i in range(60):
-        timestamp = start_time + timedelta(seconds=random.randint(0, 7200))
+        timestamp = start_time + timedelta(seconds=random.randint(0, 21600))
         influxdb.write_metric(
             name="page_views",
             value=random.randint(200, 1500),
@@ -94,7 +94,7 @@ def populate_sample_data():
     error_types = ["database_error", "network_error", "validation_error", "auth_error"]
 
     for i in range(15):
-        timestamp = start_time + timedelta(seconds=random.randint(0, 7200))
+        timestamp = start_time + timedelta(seconds=random.randint(0, 21600))
         influxdb.write_metric(
             name="errors",
             value=random.randint(1, 5),
@@ -110,7 +110,7 @@ def populate_sample_data():
     # CPU usage - continuous metric
     print("Generating CPU usage metrics...")
     for i in range(30):
-        timestamp = start_time + timedelta(seconds=random.randint(0, 7200))
+        timestamp = start_time + timedelta(seconds=random.randint(0, 21600))
         influxdb.write_metric(
             name="cpu_usage",
             value=random.uniform(10.0, 95.0),  # CPU percentage
@@ -126,7 +126,7 @@ def populate_sample_data():
     # Memory usage
     print("Generating memory usage metrics...")
     for i in range(30):
-        timestamp = start_time + timedelta(seconds=random.randint(0, 7200))
+        timestamp = start_time + timedelta(seconds=random.randint(0, 21600))
         influxdb.write_metric(
             name="memory_usage",
             value=random.uniform(40.0, 90.0),  # Memory percentage
@@ -142,7 +142,7 @@ def populate_sample_data():
     # Database query time
     print("Generating database query metrics...")
     for i in range(25):
-        timestamp = start_time + timedelta(seconds=random.randint(0, 7200))
+        timestamp = start_time + timedelta(seconds=random.randint(0, 21600))
         influxdb.write_metric(
             name="db_query_time",
             value=random.uniform(0.01, 0.5),  # Query time in seconds

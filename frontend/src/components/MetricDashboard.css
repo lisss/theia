@@ -22,6 +22,7 @@
   border-radius: 8px;
   padding: 20px;
   background: #fafafa;
+  margin-bottom: 20px;
 }
 
 .chart-card h3 {
@@ -29,5 +30,6 @@
   margin-bottom: 15px;
   color: #555;
   text-transform: capitalize;
+  font-weight: 600;
 }
 

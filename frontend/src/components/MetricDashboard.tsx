@@ -61,6 +61,7 @@ const MetricDashboard: React.FC<MetricDashboardProps> = ({
           const metricData = metricsData[metricName] || [];
           const chartDataForMetric = metricData.map(item => ({
             time: new Date(item.time_bucket).toLocaleTimeString(),
+            fullTime: new Date(item.time_bucket).toISOString(),
             value: item.avg_value,
             count: item.count,
           }));
@@ -68,19 +69,41 @@ const MetricDashboard: React.FC<MetricDashboardProps> = ({
           return (
             <div key={metricName} className="chart-card">
               <h3>{metricName}</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={chartDataForMetric}>
+              <ResponsiveContainer width="100%" height={350}>
+                <LineChart 
+                  data={chartDataForMetric}
+                  margin={{ top: 5, right: 30, left: 20, bottom: 60 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="time" />
+                  <XAxis 
+                    dataKey="time" 
+                    angle={-45}
+                    textAnchor="end"
+                    height={80}
+                    interval={Math.max(0, Math.floor(chartDataForMetric.length / 12))}
+                    tick={{ fontSize: 10 }}
+                    minTickGap={30}
+                  />
                   <YAxis />
-                  <Tooltip />
+                  <Tooltip 
+                    formatter={(value: number) => [value.toFixed(2), aggregateFunction === 'mean' ? 'Average' : 
+                          aggregateFunction === 'sum' ? 'Sum' :
+                          aggregateFunction === 'max' ? 'Maximum' :
+                          aggregateFunction === 'min' ? 'Minimum' :
+                          aggregateFunction === 'count' ? 'Count' :
+                          aggregateFunction === 'last' ? 'Last Value' : 'Value']}
+                    labelFormatter={(label) => `Time: ${label}`}
+                  />
                   <Legend />
                   <Line
                     type="monotone"
                     dataKey="value"
                     stroke={colors[index % colors.length]}
-                    strokeWidth={2}
-                    dot={{ r: 4 }}
+                    strokeWidth={3}
+                    dot={{ r: 3, fill: colors[index % colors.length], strokeWidth: 2, stroke: '#fff' }}
+                    activeDot={{ r: 8, stroke: colors[index % colors.length], strokeWidth: 2, fill: '#fff' }}
+                    isAnimationActive={true}
+                    animationDuration={300}
                     name={aggregateFunction === 'mean' ? 'Average' : 
                           aggregateFunction === 'sum' ? 'Sum' :
                           aggregateFunction === 'max' ? 'Maximum' :
